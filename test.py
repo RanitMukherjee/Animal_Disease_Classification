@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 from sklearn.tree import DecisionTreeRegressor
 df = pd.read_excel("animal_disease_dataset.xlsx")
 #df = df.drop('Disease', axis=1)
@@ -33,5 +34,6 @@ y=df.Disease
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 model=DecisionTreeRegressor(max_depth=12)
 model.fit(x_train, y_train)
-predictions = model.predict(x_test)
-print(predictions)
+y_pred = model.predict(x_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Model accuracy: {accuracy}')
