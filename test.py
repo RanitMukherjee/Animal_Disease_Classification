@@ -35,5 +35,15 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 model=DecisionTreeRegressor(max_depth=12)
 model.fit(x_train, y_train)
 y_pred = model.predict(x_test)
-accuracy = accuracy_score(y_test, y_pred)
+def compute_accuracy(Y_true, Y_pred):  
+    correctly_predicted = 0  
+    # iterating over every label and checking it with the true sample  
+    for true_label, predicted in zip(Y_true, Y_pred):  
+        if true_label == predicted:  
+            correctly_predicted += 1  
+    # computing the accuracy score  
+    accuracy_score = correctly_predicted / len(Y_true)  
+    return accuracy_score  
+#accuracy = accuracy_score(y_test, y_pred)
+accuracy = compute_accuracy(y_test, y_pred)
 print(f'Model accuracy: {accuracy}')
