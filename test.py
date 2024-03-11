@@ -1,12 +1,17 @@
 import pandas as pd
 import numpy as np
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.tree import DecisionTreeRegressor
-df = pd.read_excel("animal_disease_dataset.xlsx")
-#df = df.drop('Disease', axis=1)
-columns="Animal Age Temperature Symptom1 Symptom2 Symptom3".split()
-#columns="Age Temperature Symptom1 Symptom2 Symptom3".split()
+from sklearn import metrics
+
+#from six import StringIO
+#from IPython.display import Image  
+#from sklearn.tree import export_graphviz
+#import pydotplus
+
+col_names = ['Animal', 'Age', 'Temparature', 'Symptom1', 'Symptom2', 'Symptom3', 'Disease']
+pima = pd.read_excel("animal_disease_dataset.xlsx", header=None, names=col_names)
+
 
 def handle_non_numerical_data(df):
     columns = df.columns.values
@@ -28,22 +33,22 @@ def handle_non_numerical_data(df):
 
     return df
 
-df = handle_non_numerical_data(df)
-x=pd.DataFrame(df,columns=columns)
-y=df.Disease
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
-model=DecisionTreeRegressor(max_depth=12)
-model.fit(x_train, y_train)
-y_pred = model.predict(x_test)
-def compute_accuracy(Y_true, Y_pred):  
-    correctly_predicted = 0  
-    # iterating over every label and checking it with the true sample  
-    for true_label, predicted in zip(Y_true, Y_pred):  
-        if true_label == predicted:  
-            correctly_predicted += 1  
-    # computing the accuracy score  
-    accuracy_score = correctly_predicted / len(Y_true)  
-    return accuracy_score  
-#accuracy = accuracy_score(y_test, y_pred)
-accuracy = compute_accuracy(y_test, y_pred)
-print(f'Model accuracy: {accuracy}')
+pima = handle_non_numerical_data(pima)
+pima.head()
+feature_cols = ['Age', 'Temparature', 'Symptom1', 'Symptom2', 'Symptom3']
+X = pima[feature_cols] 
+y = pima.Disease
+#columns="Age Temperature Symptom1 Symptom2 Symptom3".split()
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
+clf = DecisionTreeClassifier()
+clf = clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+
+
+#dot_data = StringIO()
+#export_graphviz(clf, out_file=dot_data, filled=True, rounded=True, special_characters=True,feature_names = feature_cols,class_names=['0','1'])
+#graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
+#graph.write_png('diabetes.png')
+#Image(graph.create_png())
